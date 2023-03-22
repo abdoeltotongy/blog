@@ -1,8 +1,7 @@
 @extends('layouts.main')
 @section('title')
-    Update
+    Post
 @endsection
-@include('layouts.header')
 
 @section('content')
     <div class="dark:bg-gray-900 min-h-screen">
@@ -16,6 +15,7 @@
                         </button>
                     </div>
                     <!-- Add  comment -->
+                    @include('inc.errors')
                     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                         aria-hidden="true">
                         <div class="modal-dialog">
@@ -26,7 +26,7 @@
                                         aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <form action="{{ route('comment.store', $post->id) }}" method="POST">@csrf
+                                    <form action="{{ route('comment.store') }}" method="POST">@csrf
                                         <input type="hidden" name="post_id" value="{{ $post->id }}" />
                                         <input type="hidden" name="user_id" value="{{ auth()->user()->id }}" />
 
@@ -67,41 +67,39 @@
                     </div>
 
 
-                    @foreach ($comments as $comment)
-                        @if ($post->id === $comment->post_id)
-                            <div class="card mb-3" style="max-width: 700px; margin: auto">
+                    @foreach ($post->comments as $comment)
+                        <div class="card mb-3" style="max-width: 700px; margin: auto">
 
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="card-body comment-card">
-                                            <p class="card-text">{{ auth()->user()->name }}</p>
-                                            <p class="card-text">{{ $comment->comment }}</p>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card-body comment-card">
+                                        <p class="card-text">{{ auth()->user()->name }}</p>
+                                        <p class="card-text">{{ $comment->comment }}</p>
 
-                                            <div>
-                                                <a type="button" class="btn btn-outline-success edit-btn"
-                                                    data-id="{{ $comment->id }}" data-post-id="{{ $comment->post_id }}"
-                                                    data-user-id="{{ $comment->user_id }}"
-                                                    data-comment="{{ $comment->comment }}" data-bs-toggle="modal"
-                                                    data-bs-target="#edit-modal"
-                                                    href="{{ route('comment.edit', $comment->id) }}">
-                                                    Edit
-                                                </a>
+                                        <div>
+                                            <a type="button" class="btn btn-outline-success edit-btn"
+                                                data-id="{{ $comment->id }}" data-post-id="{{ $comment->post_id }}"
+                                                data-user-id="{{ $comment->user_id }}"
+                                                data-comment="{{ $comment->comment }}" data-bs-toggle="modal"
+                                                data-bs-target="#edit-modal"
+                                                href="{{ route('comment.edit', $comment->id) }}">
+                                                Edit
+                                            </a>
 
 
-                                                <button class="btn btn-outline-danger " type="submit"
-                                                    onclick="removeItem('{{ route('comment.delete', $comment->id) }}')">
-                                                    Delete
-                                                </button>
-                                                <form id="deleteItem" action="" method="POST">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                </form>
-                                            </div>
+                                            <button class="btn btn-outline-danger " type="submit"
+                                                onclick="removeItem('{{ route('comment.destroy', $comment->id) }}')">
+                                                Delete
+                                            </button>
+                                            <form id="deleteItem" action="" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        @endif
+                        </div>
                     @endforeach
                 </div>
             </div>
@@ -109,7 +107,7 @@
     </div>
 
     <!-- Edit Comment -->
-    @include('inc.errors')
+
     <div class="modal fade" id="edit-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -118,8 +116,9 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="post" action="{{ route('comment.edit', $post->id) }}" id="edit-form"
+                    <form method="post" action="{{ route('comment.update', $post->id) }}" id="edit-form"
                         enctype="multipart/form-data">
+                        @method('put')
                         @csrf
 
                         <input type="hidden" name="id">
@@ -141,8 +140,6 @@
             </div>
         </div>
     </div>
-
-    @include('layouts.footer')
 @endsection
 @section('scripts')
     <script>

@@ -21,7 +21,13 @@
 <body>
 
 
+
+    @include('layouts.header')
+
     @yield('content')
+
+    @include('layouts.footer')
+
 
 
     <script src="{{ asset('front/js/sweetalert2.min.js') }}"></script>

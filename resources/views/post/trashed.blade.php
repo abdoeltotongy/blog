@@ -2,7 +2,6 @@
 @section('title')
     Posts
 @endsection
-@include('layouts.header')
 
 @section('content')
     <div class="min-h-screen dark:bg-gray-900 ">
@@ -78,10 +77,6 @@
             </div>
         </div>
     </div>
-
-
-
-    @include('layouts.footer')
 @endsection
 <script>
     function removeItem(url, e) {

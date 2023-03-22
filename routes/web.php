@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\CommentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,20 +15,22 @@ use App\Http\Controllers\PostController;
 |
 */
 
-Route::get('/dashboard', function () {
-    return view('welcome');
+Route::get('/', function () {
+    return view('auth.login');
 });
 
-// Route::get('post/comment/{post}',[PostController::class,'comment']);
-Route::post('post/comment/{comment}',[PostController::class,'createComment'])->name('comment.store');
-Route::post('post/comment/edit/{comment}', [PostController::class, 'editComment'])->name('comment.edit');
-Route::delete('post/comment/delete/{comment}', [PostController::class, 'deleteComment'])->name('comment.delete');
+
+Route::group(['middleware'=>'auth'] , function (){
 
 
+Route::resource('comment', CommentController::class);
 Route::resource('blog', PostController::class);
-Route::get('/trashed',[PostController::class, 'softDelete'])->name('post.soft.delete');
-Route::post('/restore/{post}',[PostController::class, 'restore'])->name('post.restore');
-Route::delete('/force/delete/{post}',[PostController::class, 'forceDelete'])->name('post.forceDelete');
+
+Route::get('posts/trashed',[PostController::class, 'deletedPosts'])->name('post.soft.delete');
+Route::post('posts/restore/{post}',[PostController::class, 'restore'])->name('post.restore');
+Route::delete('posts/forceDelete/{post}',[PostController::class, 'forceDelete'])->name('post.forceDelete');
+
+});
 Auth::routes();
 
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Route::get('/blog', [PostController::class, 'index'])->name('home');

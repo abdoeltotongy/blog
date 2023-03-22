@@ -7,6 +7,7 @@ use App\Models\Post;
 use App\Models\Comment;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use App\Http\Requests\CommentRequest;
 
 
 class PostController extends Controller
@@ -21,11 +22,7 @@ class PostController extends Controller
         return view('post.index',compact('posts'));
     }
 
-    public function softDelete()
-    {
-        $posts = Post::withTrashed()->whereNotNull('deleted_at')->get();;
-        return view('post.trashed',compact('posts'));
-    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -78,7 +75,6 @@ class PostController extends Controller
     public function update(UpdatePostRequest $request,$id)
     {
         Post::where('id' , $id)->update($request->only('title' , 'author','content'));
-
         return redirect()->route('blog.index')->with('msg', 'Edit successfully');
     }
 
@@ -93,6 +89,12 @@ class PostController extends Controller
         Post::where('id',$id)->delete();
         return redirect()->back()->with('msg', 'Deleted successfully');;
     }
+
+    public function deletedPosts ()
+    {
+        $posts = Post::onlyTrashed()->get();;
+        return view('post.trashed',compact('posts'));
+    }
     public function restore($id)
     {
         Post::where('id',$id)->restore();
@@ -104,43 +106,4 @@ class PostController extends Controller
         return redirect()->back()->with('msg', 'forceDelete successfully');;
     }
 
-
-
-    public function comment()
-    {
-        $data['posts'] = Post::get();
-        $data['comment'] = Comment::get();
-
-        return view('comment.index')->with($data);
-    }
-
-    public function createComment(Request $request){
-
-       Comment::create([
-            'user_id' =>  $request->user_id,
-            'post_id' =>  $request->post_id,
-            'comment' =>  $request->comment,
-        ]);
-
-         return redirect()->back()->with('msg', 'Added successfully');
-    }
-
-
-    public function editComment(Request $request , $id)
-    {
-        Comment::findOrFail($request->id)->update([
-            'post_id' =>  $request->post_id,
-            'user_id' =>  $request->user_id,
-            'comment' =>  $request->comment,
-        ]);
-
-
-        return redirect()->back()->with('msg', ' Updated Successfully');
-    }
-
-    public function deleteComment($id)
-    {
-        Comment::where('id',$id)->delete();
-        return redirect()->back()->with('msg', 'Deleted successfully');;
-    }
 }

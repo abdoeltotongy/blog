@@ -2,7 +2,6 @@
 @section('title')
     Update
 @endsection
-@include('layouts.header')
 
 @section('content')
     <div class="dark:bg-gray-900 min-h-screen">
@@ -55,8 +54,4 @@
 
         </div>
     </div>
-
-
-
-    @include('layouts.footer')
 @endsection

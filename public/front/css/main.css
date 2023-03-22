@@ -457,5 +457,15 @@ img.show-img {
     align-items: center;
 
     background: #1a202c45;
-    padding: 15px 20px 0px;
+    padding: 15px 20px;
+}
+.comment-card p {
+    margin: 0;
+}
+.page-404 img {
+    width: 100%;
+    height: 100vh;
+    border-radius: 0;
+    border-end-end-radius: 50% !important;
+    border-start-start-radius: 50% !important;
 }
